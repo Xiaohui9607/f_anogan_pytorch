@@ -24,7 +24,7 @@ $ python ./gan_training.py     \
           --channels   1       \ # number of image channels
           --abnormal_class 0   \ # Anomaly class idx for mnist and cifar datasets
           --device     cuda    \ # device: cuda | cpu
-          --out        ckpts \ # checkpoint directory
+          --out        ckpts   \ # checkpoint directory
 ```
 ### Encoder training
 ```bash
@@ -36,7 +36,7 @@ $ python ./enc_training.py     \
           --channels   1       \ # number of image channels
           --abnormal_class 0   \ # Anomaly class idx for mnist and cifar datasets
           --device     cuda    \ # device: cuda | cpu
-          --out        checkpoints \ # checkpoint directory
+          --out        ckpts   \ # checkpoint directory
           --G_path     ckpts/G_epoch49.pt  \ # path to trained state dict of generator
           --D_path     ckpts/D_epoch49.pt  \ # path to trained state dict of discriminator
 ```
