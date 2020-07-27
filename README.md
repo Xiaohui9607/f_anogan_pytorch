@@ -29,7 +29,7 @@ $ python ./gan_training.py     \
 ### Encoder training
 ```bash
 $ python ./enc_training.py     \
-          --n_epochs   5      \ # number of epochs of training
+          --n_epochs   5       \ # number of epochs of training
           --dataset    mnist   \ # folder | cifar10 | mnist
           --latent_dim 128     \ # dimensionality of the latent space
           --img_size   32      \ # size of each image dimension
