@@ -27,6 +27,7 @@ parser.add_argument('--dataroot', default='', help='path to dataset')
 parser.add_argument('--dataset', default='mnist', help='folder | cifar10 | mnist')
 parser.add_argument('--abnormal_class', default='0', help='Anomaly class idx for mnist and cifar datasets')
 parser.add_argument('--out', default='out', help='checkpoint directory')
+parser.add_argument('--device', default='cpu', help='device: cuda | cpu')
 parser.add_argument('--G_path', default='./baseline_9/G_epoch19.pt', help='path to trained state dict of generator')
 parser.add_argument('--D_path', default='./baseline_9/D_epoch19.pt', help='path to trained state dict of discriminator')
 opt = parser.parse_args()
@@ -34,27 +35,24 @@ print(opt)
 
 img_shape = (opt.channels, opt.img_size, opt.img_size)
 
-cuda = True if torch.cuda.is_available() else False
-
 generator = Generator(dim = 64, zdim=opt.latent_dim, nc=opt.channels)
 discriminator = Discriminator(dim = 64, zdim=opt.latent_dim, nc=opt.channels,out_feat=True)
 encoder = Encoder(dim = 64, zdim=opt.latent_dim, nc=opt.channels)
 
 generator.load_state_dict(torch.load(opt.G_path))
 discriminator.load_state_dict(torch.load(opt.D_path))
-if cuda:
-    generator.cuda()
-    encoder.cuda()
-    discriminator.cuda()
+generator.to(opt.device)
+encoder.to(opt.device)
+discriminator.to(opt.device)
 
-    encoder.train()
-    discriminator.train()
+encoder.train()
+discriminator.train()
 
 dataloader = load_data(opt)
 
 generator.eval()
 
-Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
+Tensor = torch.cuda.FloatTensor if torch.cuda.FloatTensor if opt.device == 'cuda' else torch.FloatTensor
 
 optimizer_E = torch.optim.Adam(encoder.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
@@ -67,7 +65,7 @@ for epoch in range(opt.n_epochs):
         optimizer_E.zero_grad()
         optimizer_D.zero_grad()
 
-        imgs = imgs.to('cuda')
+        imgs = imgs.to(opt.device)
         generator.zero_grad()
         z = encoder(imgs)
 
@@ -96,13 +94,13 @@ for epoch in range(opt.n_epochs):
         scores = torch.empty(
             size=(len(dataloader.valid.dataset),),
             dtype=torch.float32,
-            device='cuda')
+            device=opt.device)
         labels = torch.zeros(size=(len(dataloader.valid.dataset),),
-                                    dtype=torch.long, device='cuda')
+                                    dtype=torch.long, device=opt.device)
 
         for i, (imgs, lbls) in enumerate(dataloader.valid):
-            imgs = imgs.to('cuda')
-            lbls = lbls.to('cuda')
+            imgs = imgs.to(opt.device)
+            lbls = lbls.to(opt.device)
 
             labels[i*opt.batch_size:(i+1)*opt.batch_size].copy_(lbls)
             emb_query = encoder(imgs)
