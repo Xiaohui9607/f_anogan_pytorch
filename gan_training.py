@@ -27,19 +27,17 @@ parser.add_argument("--n_cpu", type=int, default=8, help="number of cpu threads 
 parser.add_argument("--latent_dim", type=int, default=128, help="dimensionality of the latent space")
 parser.add_argument("--img_size", type=int, default=32, help="size of each image dimension")
 parser.add_argument("--channels", type=int, default=1, help="number of image channels")
-# parser.add_argument("--clip_value", type=float, default=0.01, help="lower and upper clip value for disc. weights")
 parser.add_argument("--sample_interval", type=int, default=100, help="interval betwen image samples")
 parser.add_argument('--dataroot', default='', help='path to dataset')
 parser.add_argument('--dataset', default='mnist', help='folder | cifar10 | mnist | OCT | KDD99')
 parser.add_argument('--abnormal_class', default='0', help='Anomaly class idx for mnist and cifar datasets')
-parser.add_argument('--out', default='baseline_9', help='checkpoint directory')
+parser.add_argument('--device', default='cpu', help='device: cuda | cpu')
+parser.add_argument('--out', default='ckpts', help='checkpoint directory')
 opt = parser.parse_args()
 print(opt)
 
 os.makedirs(opt.out, exist_ok=True)
 img_shape = (opt.channels, opt.img_size, opt.img_size)
-
-cuda = True if torch.cuda.is_available() else False
 
 
 # Loss weight for gradient penalty
@@ -49,9 +47,8 @@ lambda_gp = 10
 generator = Generator(dim = 64, zdim=opt.latent_dim, nc=opt.channels)
 discriminator = Discriminator(dim = 64, zdim=opt.latent_dim, nc=opt.channels)
 
-if cuda:
-    generator.cuda()
-    discriminator.cuda()
+generator.to(opt.device)
+discriminator.to(opt.device)
 
 # Configure data loader
 dataloader = load_data(opt)
@@ -60,7 +57,7 @@ dataloader = load_data(opt)
 optimizer_G = torch.optim.Adam(generator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
 
-Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
+Tensor = torch.cuda.FloatTensor if opt.device == 'cuda' else torch.FloatTensor
 
 def compute_gradient_penalty(D, real_samples, fake_samples):
     """Calculates the gradient penalty loss for WGAN GP"""
