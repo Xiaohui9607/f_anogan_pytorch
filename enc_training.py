@@ -52,7 +52,7 @@ dataloader = load_data(opt)
 
 generator.eval()
 
-Tensor = torch.cuda.FloatTensor if torch.cuda.FloatTensor if opt.device == 'cuda' else torch.FloatTensor
+Tensor = torch.cuda.FloatTensor if  opt.device == 'cuda' else torch.FloatTensor
 
 optimizer_E = torch.optim.Adam(encoder.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
