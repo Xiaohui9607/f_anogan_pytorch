@@ -14,6 +14,7 @@ from torchvision.datasets import MNIST, CIFAR10, ImageFolder, STL10
 
 from dataloader.datasets import get_cifar_anomaly_dataset
 from dataloader.datasets import get_mnist_anomaly_dataset
+from dataloader.datasets import get_stl_anomaly_dataset
 # from dataloader.kdd_dataset import get_loader
 
 class Data:

@@ -15,7 +15,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.autograd as autograd
 import torch
-os.makedirs("images", exist_ok=True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--n_epochs", type=int, default=20, help="number of epochs of training")
@@ -29,12 +28,14 @@ parser.add_argument("--img_size", type=int, default=32, help="size of each image
 parser.add_argument("--channels", type=int, default=3, help="number of image channels")
 parser.add_argument("--sample_interval", type=int, default=100, help="interval betwen image samples")
 parser.add_argument("--dataroot", default="", help="path to dataset")
-parser.add_argument("--dataset", default="cifar10", help="folder | cifar10 | mnist")
+parser.add_argument("--dataset", default="cifar10", help="folder | cifar10 | mnist | stl")
 parser.add_argument("--abnormal_class", default="airplane", help="Anomaly class idx for mnist and cifar datasets")
-parser.add_argument("--device", default="cuda", help="device: cuda | cpu")
+parser.add_argument("--device", default="cuda", help="device: cuda | cpu - cuda:0 will use only the first gpu")
+parser.add_argument("--name", default="test")
 parser.add_argument("--out", default="ckpts", help="checkpoint directory")
 opt = parser.parse_args()
 print(opt)
+os.makedirs("images/{}".format(opt.name), exist_ok=True)
 
 os.makedirs(opt.out, exist_ok=True)
 img_shape = (opt.channels, opt.img_size, opt.img_size)
@@ -131,7 +132,7 @@ for epoch in range(opt.n_epochs):
                 "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
                 % (epoch, opt.n_epochs, i, len(dataloader.train), d_loss.item(), g_loss.item())
             )
-            save_image(fake_imgs.data[:25], "images/%d.png" % batches_done, nrow=5, normalize=True)
+            save_image(fake_imgs.data[:25], "images/%s/%d.png" % (opt.name,batches_done), nrow=5, normalize=True)
 
         batches_done += 1
 

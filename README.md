@@ -21,6 +21,4 @@ $ python ./gan_training.py --n_epochs   50 --dataset    mnist --latent_dim 128 -
 ### Encoder training
 ```bash
 $ python ./enc_training.py --n_epochs   5 --dataset    mnist --latent_dim 128 --img_size   32 --channels   1 --abnormal_class 0 --device     cuda --out        ckpts --G_path     ckpts/G_epoch49.pt --D_path     ckpts/D_epoch49.pt
-
-$ python ./enc_training.py --n_epochs   5 --dataset    mnist --latent_dim 128 --img_size   32 --channels   1 --abnormal_class 0 --device     cuda --out        ckpts --G_path     ckpts/G_epoch49.pt --D_path     ckpts/D_epoch49.pt
 ```
