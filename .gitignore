@@ -26,3 +26,6 @@ utils/__pycache__/
 
 
 logs/
+images/
+*.txt
+/ckpts
