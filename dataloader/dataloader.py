@@ -10,7 +10,7 @@ import torch
 from torchvision import transforms
 from torchvision.transforms import functional as F
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST, CIFAR10, ImageFolder
+from torchvision.datasets import MNIST, CIFAR10, ImageFolder, STL10
 
 from dataloader.datasets import get_cifar_anomaly_dataset
 from dataloader.datasets import get_mnist_anomaly_dataset
@@ -62,6 +62,16 @@ def load_data(opt):
         valid_ds = MNIST(root='./data', train=False, download=True, transform=transform)
         train_ds, valid_ds = get_mnist_anomaly_dataset(train_ds, valid_ds, int(opt.abnormal_class))
 
+    #STL
+    elif opt.dataset in ['stl']:
+        transform = transforms.Compose([transforms.Resize(opt.img_size),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize((0.1307,), (0.3081,))])
+
+        train_ds = STL10(root='./data', split='train', download=True, transform=transform)
+        valid_ds = STL10(root='./data', split='test', download=True, transform=transform)
+        train_ds, valid_ds = get_stl_anomaly_dataset(train_ds, valid_ds, int(opt.abnormal_class))
+
     # FOLDER
     elif opt.dataset in ['OCT']:
         # TODO: fix the OCT dataset into the dataloader and return
@@ -100,4 +110,3 @@ def load_data(opt):
     valid_dl = DataLoader(dataset=valid_ds, batch_size=opt.batch_size, shuffle=False, drop_last=False)
 
     return Data(train_dl, valid_dl)
-
