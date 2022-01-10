@@ -24,10 +24,11 @@ parser.add_argument("--img_size", type=int, default=32, help="size of each image
 parser.add_argument("--channels", type=int, default=3, help="number of image channels")
 parser.add_argument("--print_interval", type=int, default=100, help="interval of loss printing")
 parser.add_argument("--dataroot", default="", help="path to dataset")
-parser.add_argument("--dataset", default="cifar10", help="folder | cifar10 | mnist")
+parser.add_argument("--dataset", default="cifar10", help="folder | cifar10 | mnist | stl")
 parser.add_argument("--abnormal_class", default="airplane", help="Anomaly class idx for mnist and cifar datasets")
 parser.add_argument("--out", default="ckpts", help="checkpoint directory")
 parser.add_argument("--device", default="cuda", help="device: cuda | cpu")
+parser.add_argument("--name", default="test")
 parser.add_argument("--G_path", default="ckpts/G_epoch19.pt", help="path to trained state dict of generator")
 parser.add_argument("--D_path", default="ckpts/D_epoch19.pt", help="path to trained state dict of discriminator")
 opt = parser.parse_args()
@@ -126,4 +127,6 @@ for epoch in range(opt.n_epochs):
         print(roc_auc)
         max_auc = max(roc_auc, max_auc)
 
-print(opt.out, "[auc: ", max_auc,"]")
+# saving output to specified name
+with open(opt.name+".txt", 'w') as f:
+    f.write("ROC_AUC " +str(roc_auc)+"| MAX AUC " + str(max_auc) + '\n')
